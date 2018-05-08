@@ -1,7 +1,7 @@
 from model import InceptionResNetV1
 import numpy as np
 import cv2
-import os
+from face_repo import FaceRepo
 from skimage.transform import resize
 from scipy.spatial import distance
 img_size = (160, 160, 3)
@@ -47,6 +47,7 @@ def get_distances(anchor, embeddings):
     return distances
 
 
+repo = FaceRepo()
 model = InceptionResNetV1(weights_path="model/facenet_keras.h5")
 images = load_images_from_database(database)
 anchor = load_image("yaiza3.PNG")
