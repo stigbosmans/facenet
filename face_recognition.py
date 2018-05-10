@@ -1,4 +1,4 @@
-from model import InceptionResNetV1
+from model.model import InceptionResNetV1
 import numpy as np
 import cv2
 from face_repo import FaceRepo
@@ -8,7 +8,7 @@ img_size = (160, 160, 3)
 
 database = [{"name": "Stig", "path": "images/stig1.PNG"}, {"name": "Stig", "path": "images/stig2.PNG"}, {"name": "Stig", "path": "images/stig3.PNG"},
             {"name": "Yaiza", "path": "images/yaiza1.PNG"}, {"name": "Yaiza", "path": "images/yaiza2.PNG"}, {"name": "Yaiza", "path": "images/yaiza3.PNG"}]
-
+model = InceptionResNetV1(weights_path="model/facenet_keras.h5")
 
 def l2_normalize(x, axis=-1, epsilon=1e-10):
     output = x / np.sqrt(np.maximum(np.sum(np.square(x), axis=axis, keepdims=True), epsilon))
@@ -32,10 +32,10 @@ def load_image(path):
     return img
 
 
-def load_images_from_database(database):
+def load_images(image_paths):
     images = []
-    for item in database:
-        img = load_image(item['path'])
+    for path in image_paths:
+        img = load_image(path)
         images.append(img)
     return images
 
@@ -47,11 +47,16 @@ def get_distances(anchor, embeddings):
     return distances
 
 
-repo = FaceRepo()
-model = InceptionResNetV1(weights_path="model/facenet_keras.h5")
-images = load_images_from_database(database)
-anchor = load_image("yaiza3.PNG")
-embeddings = l2_normalize(model.predict_on_batch(np.array(images)))
-anchor_embedding = l2_normalize(model.predict_on_batch(np.array([anchor])))
-print(get_distances(anchor_embedding, embeddings))
-print(database[np.argmin(get_distances(anchor_embedding, embeddings))]['name'])
+def recognize(face_path):
+    repo = FaceRepo()
+    faces, labels = repo.get_all_faces()
+    db_images = load_images(faces)
+    anchor = load_image(face_path)
+    embeddings = l2_normalize(model.predict_on_batch(np.array(db_images)))
+    anchor_embedding = l2_normalize(model.predict_on_batch(np.array([anchor])))
+    distances = get_distances(anchor_embedding, embeddings)
+    min_index = np.argmin(distances)
+    return labels[min_index], distances[min_index]
+
+if __name__ == "__main__":
+    print(f"Welcome {recognize('yaiza3.PNG')}")

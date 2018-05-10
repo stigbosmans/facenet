@@ -44,6 +44,15 @@ class FaceRepo:
             self.db.append(entry)
         self.flush()
 
+    def get_all_faces(self):
+        labels = []
+        faces = []
+        for i in self.db:
+            for f in i['faces']:
+                faces.append(f)
+                labels.append(i['name'])
+        return faces, labels
+
     def flush(self):
         f = open(self.database_path, 'w')
         f.write(json.dumps(self.db))
@@ -52,4 +61,10 @@ class FaceRepo:
 
 if __name__ == "__main__":
     repo = FaceRepo()
-    repo.add_face('yaiza', 'yaiza3.PNG')
+    repo.add_face('yaiza', 'images/yaiza1.PNG')
+    repo.add_face('yaiza', 'images/yaiza2.PNG')
+    repo.add_face('yaiza', 'images/yaiza3.PNG')
+
+    repo.add_face('stig', 'images/stig1.PNG')
+    repo.add_face('stig', 'images/stig2.PNG')
+    repo.add_face('stig', 'images/stig3.PNG')
