@@ -1,14 +1,12 @@
 from model.model import InceptionResNetV1
 import numpy as np
 import cv2
-from face_repo import FaceRepo
+from face_database_repo import FaceRepo
 from skimage.transform import resize
 from scipy.spatial import distance
 img_size = (160, 160, 3)
 
-database = [{"name": "Stig", "path": "images/stig1.PNG"}, {"name": "Stig", "path": "images/stig2.PNG"}, {"name": "Stig", "path": "images/stig3.PNG"},
-            {"name": "Yaiza", "path": "images/yaiza1.PNG"}, {"name": "Yaiza", "path": "images/yaiza2.PNG"}, {"name": "Yaiza", "path": "images/yaiza3.PNG"}]
-model = InceptionResNetV1(weights_path="model/facenet_keras.h5")
+facenet = InceptionResNetV1(weights_path="model/facenet_keras.h5")
 
 def l2_normalize(x, axis=-1, epsilon=1e-10):
     output = x / np.sqrt(np.maximum(np.sum(np.square(x), axis=axis, keepdims=True), epsilon))
@@ -52,11 +50,12 @@ def recognize(face_path):
     faces, labels = repo.get_all_faces()
     db_images = load_images(faces)
     anchor = load_image(face_path)
-    embeddings = l2_normalize(model.predict_on_batch(np.array(db_images)))
-    anchor_embedding = l2_normalize(model.predict_on_batch(np.array([anchor])))
+    embeddings = l2_normalize(facenet.predict_on_batch(np.array(db_images)))
+    anchor_embedding = l2_normalize(facenet.predict_on_batch(np.array([anchor])))
     distances = get_distances(anchor_embedding, embeddings)
     min_index = np.argmin(distances)
     return labels[min_index], distances[min_index]
 
 if __name__ == "__main__":
-    print(f"Welcome {recognize('yaiza3.PNG')}")
+    print(f"Welcome {recognize('1525940315273.jpg')}")
+    print(f"Welcome {recognize('1525940328641.jpg')}")

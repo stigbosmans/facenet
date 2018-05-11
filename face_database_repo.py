@@ -61,10 +61,4 @@ class FaceRepo:
 
 if __name__ == "__main__":
     repo = FaceRepo()
-    repo.add_face('yaiza', 'images/yaiza1.PNG')
-    repo.add_face('yaiza', 'images/yaiza2.PNG')
-    repo.add_face('yaiza', 'images/yaiza3.PNG')
-
-    repo.add_face('stig', 'images/stig1.PNG')
-    repo.add_face('stig', 'images/stig2.PNG')
-    repo.add_face('stig', 'images/stig3.PNG')
+    repo.add_face('stig', 'images/1525940742875.jpg')
